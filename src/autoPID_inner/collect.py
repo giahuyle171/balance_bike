@@ -2,7 +2,6 @@ import serial
 import time
 import csv
 
-# --- CẤU HÌNH ---
 FILE_PATH = 'data2.csv'
 SERIAL_PORT = 'COM8' 
 BAUD_RATE = 115200
