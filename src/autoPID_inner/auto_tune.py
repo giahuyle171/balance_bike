@@ -51,7 +51,7 @@ def evaluate_pid(kp, ki, kd):
     return total_penalty / max(samples, 1)
 
 
-print("Start (TWIDDLE)...")
+print("Start...")
 
 p = [0.1, 0.0, 0.0]
 p = [3.749023256493648, 0.27974983358324107, 0.09971313647581159]
@@ -59,48 +59,39 @@ p = [3.749023256493648, 0.27974983358324107, 0.09971313647581159]
 dp = [0.1, 0.01, 0.01] 
 
 best_err = evaluate_pid(p[0], p[1], p[2])
-print(f"PID = {p}, Điểm phạt = {best_err:.2f}")
+print(f"PID = {p}, error = {best_err:.2f}")
 
 iteration = 0
 
 try:
     while sum(dp) > 0.001:
         iteration += 1
-        print(f"\n--- Vòng {iteration} --- Bước nhảy hiện tại: {dp}")
+        print(f"\n---Round {iteration} --- Step: {dp}")
         
         for i in range(len(p)):
             p[i] += dp[i]
             err = evaluate_pid(p[0], p[1], p[2])
             
             if err < best_err:
-                # Nếu tốt hơn: Giữ nguyên thay đổi, tăng bước nhảy để "đi tiếp"
                 best_err = err
                 dp[i] *= 1.1
-                print(f"TỐT HƠN! Tăng tham số {i}. PID: {p} | Điểm phạt mới: {best_err:.2f}")
+                print(f" PID: {p} | error: {best_err:.2f}")
             else:
-                # Nếu tệ đi: Thử trừ ngược lại
                 p[i] -= 2 * dp[i]
-                # Tránh để PID mang số âm
                 if p[i] < 0: p[i] = 0.0
-                
-                err = evaluate_pid(p[0], p[1], p[2])
-                
+                err = evaluate_pid(p[0], p[1], p[2])   
                 if err < best_err:
-                    # Nếu hướng giảm tốt hơn: Giữ nguyên, tăng bước nhảy
                     best_err = err
                     dp[i] *= 1.1
-                    print(f"TỐT HƠN! Giảm tham số {i}. PID: {p} | Điểm phạt mới: {best_err:.2f}")
+                    print(f{i}. PID: {p} |error: {best_err:.2f}")
                 else:
-                    # Nếu cả tăng và giảm đều tệ: Quay về ban đầu, thu nhỏ bước nhảy lại
                     p[i] += dp[i]
                     dp[i] *= 0.9
 except KeyboardInterrupt:
     pass
                 
 send_cmd("s0")
-print(f"\n====================================")
-print(f"HOÀN THÀNH! BỘ PID TỐT NHẤT LÀ:")
 print(f"Kp = {p[0]:.4f}")
 print(f"Ki = {p[1]:.4f}")
 print(f"Kd = {p[2]:.4f}")
-print(f"Điểm phạt nhỏ nhất: {best_err:.2f}")
+print(f"best error: {best_err:.2f}")
